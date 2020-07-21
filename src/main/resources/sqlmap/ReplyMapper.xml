@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.team404.reply.mapper.ReplyMapper">
+
+	<insert id="replyRegist">
+	insert into freereply(rno, bno, reply, replyId, replyPw)
+	values (freereply_seq.nextval, #{bno}, #{reply}, #{replyId}, #{replyPw})
+	</insert>
+	
+	<select id = "getList" resultType="ReplyVO">
+		select * from freereply where bno = #{bno} order by rno desc	
+	</select>
+	
+	<select id = "confirm" resultType = "int">
+		select count(*) as result from freereply where rno = #{rno} and replyPw = #{replyPw}
+	</select>
+	
+	<update id = "update">
+		update freereply set  reply = #{reply} where rno = #{rno}
+	</update>
+
+
+</mapper>  

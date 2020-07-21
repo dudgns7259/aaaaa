@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	
+	
+	<!-- 아래 bean은 외부 설정파일을 참조하는곳에 사용하는 클래스 -->
+	<!-- classpath:/ 는 src/main/resources 폴더아래 파일을 참조할 수 있습니다. -->
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:/db-config/Hikari.properties"/>
+	</bean>
+		
+	<!-- 히카리 커넥션 DB설정 -->
+	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+		<property name="driverClassName" value="${ds.driverClassName}" />
+		<property name="jdbcUrl" value="${ds.url}"/>
+		<property name="username" value="${ds.username}"/>
+		<property name="password" value="${ds.password}"/>
+	</bean>
+	
+	<!-- 위에 설정한 DB정보를 DataSource객체에 의존성 주입 -->
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
+		<constructor-arg ref="hikariConfig"/>
+	</bean>
+	<!-- 마이바티스 연결객체 생성 -->
+	<!-- 세터주입으로 dataSource객체를 주입  -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- 마이바티스 외부 설정 파일 -->
+		<property name="configLocation" value="classpath:/mybatis-config/mybatis-config.xml"  />
+		<!-- 마이바티스 구현체 mapper를 묶어서 관리하기 위한 경로 설정 -->
+		<property name="mapperLocations" value="classpath:/sqlmap/*.xml"/>  
+	</bean>
+	
+	<!-- 마이바티스 인터페이스를 자동으로 읽어서 bean으로 생성 -->
+	<mybatis-spring:scan base-package="com.team404.*"/>
+	
+
+
+
+
+</beans>
